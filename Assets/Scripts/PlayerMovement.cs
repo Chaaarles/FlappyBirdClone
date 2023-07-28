@@ -10,7 +10,12 @@ public class PlayerMovement : MonoBehaviour
     public float jumpSpeed;
     public float maxFallSpeed;
     public float gravity;
+
+    public AudioSource woosh;
+    public AudioSource impact;
+
     private Animator _animator;
+    private AudioSource _audio;
     private Rigidbody2D _rigidbody;
 
     private float _velocity;
@@ -33,7 +38,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        {
             _velocity = math.max(jumpSpeed, (_velocity + jumpSpeed) / 1.4f);
+            woosh.Play();
+        }
 
         _velocity = math.max(-1 * maxFallSpeed, _velocity - gravity * Time.deltaTime);
         _rigidbody.velocityY = _velocity;
@@ -47,7 +55,13 @@ public class PlayerMovement : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("ScoreTrigger"))
+        {
             scoreManager.IncrementScore();
-        else if (other.CompareTag("Killer")) gameManager.PlayerDead();
+        }
+        else if (other.CompareTag("Killer"))
+        {
+            gameManager.PlayerDead();
+            impact.Play();
+        }
     }
 }
